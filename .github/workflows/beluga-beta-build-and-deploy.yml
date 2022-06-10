@@ -2,6 +2,10 @@ name: Build & Deploy beta Seller to Azure
 
 on:
   workflow_call:
+    secrets:
+      GCP_CREDENTIALS:
+        required: true
+
 # env:
 #   AZURE_CONTAINER_REGISTRY: shopastro # set this to the name of your container registry
 #   PROJECT_NAME: ${{ github.repository }}            # set this to your project's name
