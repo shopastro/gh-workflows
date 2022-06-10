@@ -12,7 +12,7 @@ on:
       PROJECT_ID:
         required: true
         type: string
-      GKENAME:
+      GKE_NAME:
         required: true
         type: string
       GKE_LOCATION:
