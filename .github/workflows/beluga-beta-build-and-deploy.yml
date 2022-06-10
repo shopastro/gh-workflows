@@ -5,14 +5,19 @@ on:
     secrets:
       GCP_CREDENTIALS:
         required: true
+    inputs:
       GCR:
         required: true
+        type: string
       PROJECT_ID:
         required: true
-      GKE_NAME:
+        type: string
+      GKENAME:
         required: true
+        type: string
       GKE_LOCATION:
         required: true
+        type: string
 
 
 jobs:
@@ -37,7 +42,7 @@ jobs:
     - name: Login to GCR
       uses: docker/login-action@v1 
       with:
-        registry: ${{ secrets.GCR }}
+        registry: ${{ inputs.GCR }}
         username:  _json_key
         password: ${{ secrets.GCP_CREDENTIALS }}
 
@@ -49,8 +54,8 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
-          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:latest
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:latest
 
   deploy-to-gcp:
     name: Deploy to GKE
@@ -71,9 +76,9 @@ jobs:
       id: 'get-credentials'
       uses: 'google-github-actions/get-gke-credentials@v0'
       with:
-        cluster_name: ${{ secrets.GKE_NAME }}
-        location: ${{ secrets.GKE_LOCATION }}
-        project_id: ${{ secrets.PROJECT_ID }}
+        cluster_name: ${{ inputs.GKE_NAME }}
+        location: ${{ inputs.GKE_LOCATION }}
+        project_id: ${{ inputs.PROJECT_ID }}
 
     - name: Deploy to K8S
       uses: azure/k8s-deploy@v1
@@ -81,5 +86,5 @@ jobs:
         manifests: |
           ${{ github.workspace }}/manifests/manifests.yaml
         images: |
-          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
         namespace: app
