@@ -5,17 +5,15 @@ on:
     secrets:
       GCP_CREDENTIALS:
         required: true
+      GCR:
+        required: true
+      PROJECT_ID:
+        required: true
+      GKE_NAME:
+        required: true
+      GKE_LOCATION:
+        required: true
 
-# env:
-#   AZURE_CONTAINER_REGISTRY: shopastro # set this to the name of your container registry
-#   PROJECT_NAME: ${{ github.repository }}            # set this to your project's name
-#   RESOURCE_GROUP: beta-RG          # set this to the resource group containing your AKS cluster
-#   CLUSTER_NAME: beta-aks             # set this to the name of your AKS cluster
-#   PROJECT_ID: beluga-beta 
-#   LOCATION: asia-southeast1
-#   GKE_NAME: beluga-beta
-#   GKE_LOCATION: asia-southeast1
-#   GCR: asia-southeast1-docker.pkg.dev
 
 jobs:
 
@@ -39,7 +37,7 @@ jobs:
     - name: Login to GCR
       uses: docker/login-action@v1 
       with:
-        registry: ${{ env.GCR }}
+        registry: ${{ secrets.GCR }}
         username:  _json_key
         password: ${{ secrets.GCP_CREDENTIALS }}
 
@@ -51,8 +49,8 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ env.GCR }}/${{ env.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
-          ${{ env.GCR }}/${{ env.PROJECT_ID }}/${{ github.repository }}:latest
+          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
+          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:latest
 
   deploy-to-gcp:
     name: Deploy to GKE
@@ -73,9 +71,9 @@ jobs:
       id: 'get-credentials'
       uses: 'google-github-actions/get-gke-credentials@v0'
       with:
-        cluster_name: ${{ env.GKE_NAME }}
-        location: ${{ env.GKE_LOCATION }}
-        project_id: ${{ env.PROJECT_ID }}
+        cluster_name: ${{ secrets.GKE_NAME }}
+        location: ${{ secrets.GKE_LOCATION }}
+        project_id: ${{ secrets.PROJECT_ID }}
 
     - name: Deploy to K8S
       uses: azure/k8s-deploy@v1
@@ -83,5 +81,5 @@ jobs:
         manifests: |
           ${{ github.workspace }}/manifests/manifests.yaml
         images: |
-          ${{ env.GCR }}/${{ env.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
+          ${{ secrets.GCR }}/${{ secrets.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
         namespace: app
