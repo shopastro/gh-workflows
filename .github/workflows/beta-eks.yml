@@ -81,7 +81,7 @@ jobs:
     - name: Get kubeconfig
       uses: giboow/action-aws-cli@v1
       with:
-        args: eks update-kubeconfig --region ${{ inputs.AWS_REGION }} --name ${{ inputs.EKS_NAME }}
+        args: eks update-kubeconfig --region ${{ inputs.AWS_REGION }} --name ${{ inputs.EKS_NAME }} && export KUBECONFIG=/github/home/.kube/config
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_COM_BUILD_DEPLOY_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_COM_BUILD_DEPLOY_SECRET_ACCESS_KEY }}
