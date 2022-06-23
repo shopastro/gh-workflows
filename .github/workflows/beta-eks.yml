@@ -89,7 +89,7 @@ jobs:
 
     - name: get kubeconfig
       id: kubeconfig
-      run: echo "::set-output name=kubeconfig::$(cat $HOME/.kube/config)"  
+      run: echo "::set-output name=kubeconfig::$(cat /github/home/.kube/config)"  
 
     - name: Set K8s context
       uses: ossrs/k8s-set-context-action@v1
