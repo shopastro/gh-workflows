@@ -94,9 +94,9 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_COM_BUILD_DEPLOY_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_COM_BUILD_DEPLOY_SECRET_ACCESS_KEY }}
 
-    # - name: get kubeconfig
-    #   id: kubeconfig
-    #   run: echo "::set-output name=kubeconfig::$(cat /home/runner/.kube/config)"  
+    - name: get kubeconfig
+      id: kubeconfig
+      run: echo "::set-output name=kubeconfig::$(cat /home/runner/.kube/config)"  
 
     # - name: Set K8s context
     #   uses: ossrs/k8s-set-context-action@v1
@@ -106,5 +106,5 @@ jobs:
     - uses: danielr1996/kubectl-action@1.0.0
       name: Deploy
       with:
-        kubeconfig: /home/runner/.kube/config
-        args: set image deployment/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
+        kubeconfig: ${{ steps.kubeconfig.outputs.kubeconfig }}
+        args: set image sts/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
