@@ -73,7 +73,7 @@ jobs:
     name: Deploy to eks
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [build-push-gcr]
+    needs: [build-push-ecr]
     steps:
     - name: checkout
       uses: actions/checkout@master 
