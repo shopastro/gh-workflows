@@ -17,6 +17,9 @@ on:
       EKS_NAME:
         required: true
         type: string
+      REPO:
+        required: true
+        type: string
 
 
 
@@ -78,30 +81,30 @@ jobs:
     - name: checkout
       uses: actions/checkout@master 
 
-    - name: Get kubeconfig
-      uses: giboow/action-aws-cli@v1
+    - uses: unfor19/install-aws-cli-action@v1.0.3
       with:
-        args: eks update-kubeconfig --region ${{ inputs.AWS_REGION }} --name ${{ inputs.EKS_NAME }}
+        arch: amd64
+    - name: Login to Remote EKS
+      run: |
+        aws eks update-kubeconfig --region ${{ inputs.AWS_REGION }} --name ${{ inputs.EKS_NAME }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_COM_BUILD_DEPLOY_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_COM_BUILD_DEPLOY_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ inputs.AWS_REGION }}
 
-    - name: get kubeconfig
-      id: kubeconfig
-      run: echo "::set-output name=kubeconfig::$(cat /github/home/.kube/config)"  
+    # - name: get kubeconfig
+    #   id: kubeconfig
+    #   run: echo "::set-output name=kubeconfig::$(cat /home/runner/.kube/config)"  
 
-    - name: Set K8s context
-      uses: ossrs/k8s-set-context-action@v1
+    # - name: Set K8s context
+    #   uses: ossrs/k8s-set-context-action@v1
+    #   with:
+    #     kubeconfig: ${{ steps.kubeconfig.outputs.kubeconfig }}
+
+
+    - name: Deploy K8s
+      uses: explorium-ai/deploy-k8s-action@main
       with:
-        kubeconfig: ${{ steps.kubeconfig.outputs.kubeconfig }}
-
-
-    - name: Deploy to EKS
-      uses: azure/k8s-deploy@v1.2
-      with:
-        manifests: |
-          ${{ github.workspace }}/manifests/manifests.yaml
-        images: |
-          ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
-        namespace: app
+        install_local_cluster: false
+        kubeconfig: /home/runner/.kube/config
+        post_commands: |
+          kubectl set image deployment/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
