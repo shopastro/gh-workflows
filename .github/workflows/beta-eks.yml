@@ -87,11 +87,14 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_COM_BUILD_DEPLOY_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ inputs.AWS_REGION }}
 
+    - name: get kubeconfig
+      id: kubeconfig
+      run: echo "::set-output name=kubeconfig::$(cat $HOME/.kube/config)"  
 
     - name: Set K8s context
       uses: ossrs/k8s-set-context-action@v1
       with:
-        kubeconfig: '/github/home/.kube/config'
+        kubeconfig: ${{ steps.kubeconfig.outputs.kubeconfig }}
 
 
     - name: Deploy to EKS
