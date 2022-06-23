@@ -79,7 +79,7 @@ jobs:
       uses: actions/checkout@master 
 
     - name: Get kubeconfig
-      uses: ItsKarma/aws-cli@v1.70.0
+      uses: giboow/action-aws-cli@v1
       with:
         args: eks update-kubeconfig --region ${{ inputs.AWS_REGION }} --name ${{ inputs.EKS_NAME }}
       env:
