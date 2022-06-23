@@ -20,6 +20,9 @@ on:
       REPO:
         required: true
         type: string
+      NS:
+        required: true
+        type: string
 
 
 
