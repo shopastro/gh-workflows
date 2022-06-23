@@ -100,11 +100,8 @@ jobs:
     #   with:
     #     kubeconfig: ${{ steps.kubeconfig.outputs.kubeconfig }}
 
-
-    - name: Deploy K8s
-      uses: explorium-ai/deploy-k8s-action@main
+    - uses: danielr1996/kubectl-action@1.0.0
+      name: Deploy
       with:
-        install_local_cluster: false
         kubeconfig: /home/runner/.kube/config
-        post_commands: |
-          kubectl set image deployment/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
+        args: set image deployment/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
