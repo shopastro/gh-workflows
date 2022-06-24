@@ -123,4 +123,5 @@ jobs:
         cluster_name: ${{ inputs.EKS_NAME }}
         manifests_file: ${{ github.workspace }}/manifests/manifests.yaml
         image: ${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
+        args: apply -f ${{ github.workspace }}/manifests/manifests.yaml
         # args: set image sts/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
