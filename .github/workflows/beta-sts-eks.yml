@@ -118,4 +118,4 @@ jobs:
         aws_secret_access_key: ${{ secrets.AWS_COM_BUILD_DEPLOY_SECRET_ACCESS_KEY }}
         aws_region: ${{ inputs.AWS_REGION }}
         cluster_name: ${{ inputs.EKS_NAME }}
-        args: set image sts/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
+        args: set image sts/${{ inputs.REPO }} ${{ inputs.REPO }}=${{ steps.login-ecr.outputs.registry }}/${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }} -n ${{ inputs.NS }}
