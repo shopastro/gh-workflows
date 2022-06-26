@@ -20,9 +20,6 @@ on:
       REPO:
         required: true
         type: string
-      NS:
-        required: true
-        type: string
 
 
         
@@ -97,5 +94,4 @@ jobs:
         cluster_name: ${{ inputs.EKS_NAME }}
         manifests_file: ${{ github.workspace }}/manifests/manifests.yaml
         image: ${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
-        args: --kubeconfig=/github/home/.kube/config apply -f ${{ github.workspace }}/manifests/
-        # args: get node
+        args: --kubeconfig=/github/home/.kube/config apply -f /github/workspace/manifests/manifests.yaml -n app
