@@ -65,7 +65,7 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ inputs.ECR_REPOSITORY }}:beta-${{ github.sha }}
+          ${{ inputs.ECR_REPOSITORY }}:${{ github.sha }}
           ${{ inputs.ECR_REPOSITORY }}:latest
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
