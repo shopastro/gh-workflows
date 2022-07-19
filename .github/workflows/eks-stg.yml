@@ -17,9 +17,9 @@ on:
       EKS_NAME:
         required: true
         type: string
-      REPO:
-        required: true
-        type: string
+      # REPO:
+      #   required: true
+      #   type: string
 
 jobs:
 
