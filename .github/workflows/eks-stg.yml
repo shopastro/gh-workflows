@@ -100,6 +100,6 @@ jobs:
         cluster_name: ${{ inputs.EKS_NAME }}
         manifests_file: ${{ github.workspace }}/manifests/manifests.yaml
         image: ${{ inputs.ECR_REPOSITORY }}:${{ github.sha }}
-        args: --kubeconfig=/github/home/.kube/config rollout status deployment ${{ inputs.APP_NAME }} -n app-stg
+        args: --kubeconfig=/github/home/.kube/config rollout status deployment ${{ inputs.APP_NAME }} --timeout=4m -n app-stg
  
 
