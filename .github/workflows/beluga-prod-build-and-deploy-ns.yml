@@ -1,4 +1,4 @@
-name: Build & Deploy beta Seller to Azure
+name: Build & Deploy to GCP
 
 on:
   workflow_call:
@@ -18,7 +18,12 @@ on:
       GKE_LOCATION:
         required: true
         type: string
-
+      GCR_PROJECT_ID:
+        required: true
+        type: string
+      namespace:
+        required: true
+        type: string
 
 jobs:
 
@@ -29,14 +34,14 @@ jobs:
     - name: checkout
       uses: actions/checkout@master
     
-    - name: Set up JDK 11
+    - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
-        java-version: "11"
+        java-version: "8"
         distribution: "adopt"
         
     - name: Run mvn clean install
-      run: mvn -s mvn-settings.xml clean install -DskipTests  
+      run: mvn -s mvn-settings.xml clean install -DskipTests -ntp
 
 
     - name: Login to GCR
@@ -54,8 +59,8 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:latest
+          ${{ inputs.GCR }}/${{ inputs.GCR_PROJECT_ID }}/${{ github.repository }}:prod-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.GCR_PROJECT_ID }}/${{ github.repository }}:latest
 
   deploy-to-gcp:
     name: Deploy to GKE
@@ -86,5 +91,5 @@ jobs:
         manifests: |
           ${{ github.workspace }}/manifests/manifests.yaml
         images: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
-        namespace: app
+          ${{ inputs.GCR }}/${{ inputs.GCR_PROJECT_ID }}/${{ github.repository }}:prod-${{ github.sha }}
+        namespace: ${{ inputs.namespace }}
