@@ -38,7 +38,7 @@ jobs:
         distribution: "adopt"
         
     - name: Run mvn clean install
-      run: mvn -s mvn-settings.xml clean install -DskipTests -ntp
+      run: mvn -U -s mvn-settings.xml clean install -DskipTests -ntp
 
 
     - name: Login to GCR
