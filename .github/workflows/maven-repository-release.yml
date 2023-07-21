@@ -38,4 +38,4 @@ jobs:
         distribution: "adopt"
 
     - name: Run mvn clean install
-      run: mvn -U -s mvn-settings.xml clean install source:jar deploy -DskipTests -ntp
+      run: mvn -Dshopastro.token=4bae96e67bfeba62a0562739b070e9e54de3f0a5 -U -s mvn-settings.xml clean install source:jar deploy -DskipTests -ntp
