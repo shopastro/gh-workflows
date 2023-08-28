@@ -65,34 +65,34 @@ jobs:
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:prod-${{ github.sha }}
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:latest
 
-  deploy-to-gcp:
-    name: Deploy to GKE
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: [build-push-gcr]
-    steps:
-    - name: checkout
-      uses: actions/checkout@master 
+  # deploy-to-gcp:
+  #   name: Deploy to GKE
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   needs: [build-push-gcr]
+  #   steps:
+  #   - name: checkout
+  #     uses: actions/checkout@master 
 
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+  #   - id: 'auth'
+  #     name: 'Authenticate to Google Cloud'
+  #     uses: 'google-github-actions/auth@v0'
+  #     with:
+  #       credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: get gke credentials
-      id: 'get-credentials'
-      uses: 'google-github-actions/get-gke-credentials@v0'
-      with:
-        cluster_name: ${{ inputs.GKE_NAME }}
-        location: ${{ inputs.GKE_LOCATION }}
-        project_id: ${{ inputs.PROJECT_ID }}
+  #   - name: get gke credentials
+  #     id: 'get-credentials'
+  #     uses: 'google-github-actions/get-gke-credentials@v0'
+  #     with:
+  #       cluster_name: ${{ inputs.GKE_NAME }}
+  #       location: ${{ inputs.GKE_LOCATION }}
+  #       project_id: ${{ inputs.PROJECT_ID }}
 
-    - name: Deploy to K8S
-      uses: azure/k8s-deploy@v1
-      with:
-        manifests: |
-          ${{ github.workspace }}/manifests/manifests.yaml
-        images: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:prod-${{ github.sha }}
-        namespace: app
+  #   - name: Deploy to K8S
+  #     uses: azure/k8s-deploy@v1
+  #     with:
+  #       manifests: |
+  #         ${{ github.workspace }}/manifests/manifests.yaml
+  #       images: |
+  #         ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:prod-${{ github.sha }}
+  #       namespace: app
