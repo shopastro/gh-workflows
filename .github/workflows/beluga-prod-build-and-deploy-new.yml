@@ -92,7 +92,7 @@ jobs:
       uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ${{ github.workspace }}/manifests/manifests.yaml
+          ${{ github.workspace }}/${{ inputs.BUILD_CONTEXT }}/manifests/manifests.yaml
         images: |
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:prod-${{ github.sha }}
         namespace: app
