@@ -70,8 +70,8 @@ jobs:
         secret: ${{ github.TOKEN }}
         approvers: QianhuaiOzc,yuzhuweng,faxonX
         minimum-approvals: 1
-        issue-title: "部署 ${{ github.repository }} 到生产环境"
-        issue-body: "部署 ${{ github.repository }} 到生产环境"
+        issue-title: "部署 ${{ inputs.BUILD_CONTEXT }} 到生产环境"
+        issue-body: "部署 ${{ inputs.BUILD_CONTEXT }} 到生产环境"
         exclude-workflow-initiator-as-approver: false
         additional-approved-words: ''
         additional-denied-words: ''
