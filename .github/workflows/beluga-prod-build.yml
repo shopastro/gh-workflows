@@ -64,3 +64,14 @@ jobs:
         tags: |
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:prod-${{ github.sha }}
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.BUILD_CONTEXT }}:latest
+    - uses: trstringer/manual-approval@v1
+      name: "等待审批"
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: "QianhuaiOzc,yuzhuweng"
+        minimum-approvals: 1
+        issue-title: "部署 ${{ github.repository }} 到生产环境"
+        issue-body: "部署 ${{ github.repository }} 到生产环境"
+        exclude-workflow-initiator-as-approver: false
+        additional-approved-words: ''
+        additional-denied-words: ''
