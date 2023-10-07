@@ -40,11 +40,8 @@ jobs:
         java-version: "17"
         distribution: "adopt"
 
-    - name: select module
-      run: cd ${{ inputs.module }} ; pwd
-
     - name: Run mvn clean install
-      run: pwd ; ls .. ;  mvn -U -s ../mvn-settings.xml clean install -DskipTests -ntp
+      run: cd ${{ inputs.module }} ; pwd ; ls .. ;  mvn -U -s ../mvn-settings.xml clean install -DskipTests -ntp
 
     - name: Login to GCR
       uses: docker/login-action@v1
