@@ -18,9 +18,13 @@ on:
       GKE_LOCATION:
         required: true
         type: string
-      namespace:
+      NAMESPACE:
         required: true
         type: string
+      MANIFESTS:
+        required: true
+        type: string
+
 
 jobs:
 
@@ -86,7 +90,7 @@ jobs:
       uses: Azure/k8s-deploy@v4
       with:
         manifests: |
-          ${{ github.workspace }}/manifests/manifests.yaml
+          ${{ github.workspace }}/${{ inputs.MANIFESTS }}
         images: |
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:dev-${{ github.sha }}
-        namespace: ${{ inputs.namespace }}
+        namespace: ${{ inputs.NAMESPACE }}
