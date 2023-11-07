@@ -56,7 +56,7 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:beta-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:dev-${{ github.sha }}
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:latest
 
   deploy-to-gcp:
