@@ -18,16 +18,20 @@ on:
       GKE_LOCATION:
         required: true
         type: string
-      namespace:
+      NAMESPACE:
         required: true
         type: string
-      module:
+      MODULE:
         required: true
         type: string
-      MANIFESTS:
+      ENV:
         required: false
         type: string
-        default: 'manifests.yaml'
+        default: 'dev'
+      # MANIFESTS:
+      #   required: false
+      #   type: string
+      #   default: 'manifests.yaml'
 
 jobs:
 
@@ -58,12 +62,12 @@ jobs:
       id: build-and-push
       uses: docker/build-push-action@v2
       with:
-        context: ./${{ inputs.module }}
+        context: ./${{ inputs.MODULE }}
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.module }}:beta-${{ github.sha }}
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.module }}:latest
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:${{ inputs.ENV }}-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:latest
 
   deploy-to-gcp:
     name: Deploy to GKE
@@ -92,7 +96,7 @@ jobs:
       uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ${{ github.workspace }}/${{ inputs.module }}/manifests/${{ inputs.MANIFESTS }}
+          ${{ github.workspace }}/${{ inputs.MODULE }}/manifests/manifests-${{ inputs.ENV }}.yaml
         images: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.module }}:beta-${{ github.sha }}
-        namespace: ${{ inputs.namespace }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:${{ inputs.ENV }}-${{ github.sha }}
+        namespace: ${{ inputs.NAMESPACE }}
