@@ -1,0 +1,88 @@
+name: Build & Deploy to GKE
+
+on:
+  workflow_call:
+    secrets:
+      GCP_CREDENTIALS:
+        required: true
+      GH_ACCESS_TOKEN:
+        required: true
+    inputs:
+      GCR:
+        required: true
+        type: string
+      PROJECT_ID:
+        required: true
+        type: string
+      GKE_NAME:
+        required: true
+        type: string
+      GKE_LOCATION:
+        required: true
+        type: string
+      NAMESPACE:
+        required: true
+        type: string
+      MANIFESTS:
+        required: true
+        type: string
+
+jobs:
+  build-push-gcr:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+    - name: checkout
+      uses: actions/checkout@master
+
+    - name: Login to GCR
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ inputs.GCR }}
+        username:  _json_key
+        password: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: Build and Push
+      id: build-and-push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        builder: ${{ steps.buildx.outputs.name }}
+        push: true
+        build-args: |
+          ACCESS_TOKEN=${{ secrets.GH_ACCESS_TOKEN }}
+        tags: |
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:dev-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:latest
+
+  deploy-to-gcp:
+    name: Deploy to GKE
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [build-push-gcr]
+    steps:
+    - name: checkout
+      uses: actions/checkout@master
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+    - name: get gke credentials
+      id: 'get-credentials'
+      uses: 'google-github-actions/get-gke-credentials@v0'
+      with:
+        cluster_name: ${{ inputs.GKE_NAME }}
+        location: ${{ inputs.GKE_LOCATION }}
+        project_id: ${{ inputs.PROJECT_ID }}
+
+    - name: Deploy to K8S
+      uses: Azure/k8s-deploy@v4
+      with:
+        manifests: |
+          ${{ github.workspace }}/${{ inputs.MANIFESTS }}
+        images: |
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}:dev-${{ github.sha }}
+        namespace: ${{ inputs.NAMESPACE }}
