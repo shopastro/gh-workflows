@@ -26,6 +26,9 @@ on:
       MANIFESTS:
         required: true
         type: string
+      DOCKERFILE:
+        required: true
+        type: string
 
 jobs:
   build-push-gcr:
@@ -44,11 +47,12 @@ jobs:
 
     - name: Build and Push
       id: build-and-push
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v5
       with:
         context: .
         builder: ${{ steps.buildx.outputs.name }}
         push: true
+        file: ${{ inputs.DOCKERFILE }}
         build-args: |
           ACCESS_TOKEN=${{ secrets.GH_ACCESS_TOKEN }}
         tags: |
