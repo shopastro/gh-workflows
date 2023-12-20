@@ -84,13 +84,13 @@ jobs:
 
     - id: 'auth'
       name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v0'
+      uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
     - name: get gke credentials
       id: 'get-credentials'
-      uses: 'google-github-actions/get-gke-credentials@v0'
+      uses: 'google-github-actions/get-gke-credentials@v2'
       with:
         cluster_name: ${{ inputs.GKE_NAME }}
         location: ${{ inputs.GKE_LOCATION }}
