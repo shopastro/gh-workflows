@@ -70,7 +70,7 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         push: true
         tags: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:${{ inputs.ENV }}-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}-${{ inputs.ENV }}:${{ github.sha }}
           ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:latest
 
   deploy-to-gcp:
@@ -102,5 +102,5 @@ jobs:
         manifests: |
           ${{ github.workspace }}/${{ inputs.MODULE }}/manifests/manifests-${{ inputs.ENV }}.yaml
         images: |
-          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}:${{ inputs.ENV }}-${{ github.sha }}
+          ${{ inputs.GCR }}/${{ inputs.PROJECT_ID }}/${{ github.repository }}/${{ inputs.MODULE }}-${{ inputs.ENV }}:${{ github.sha }}
         namespace: ${{ inputs.NAMESPACE }}
