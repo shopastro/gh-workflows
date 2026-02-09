@@ -29,6 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+
+    - name: Login to GCR test
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ inputs.GCR }}
+        username:  _json_key
+        password: ${{ secrets.GCP_CREDENTIALS }}
+
     - name: checkout
       uses: actions/checkout@master
 
